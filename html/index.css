@@ -1,0 +1,160 @@
+body {
+  margin: 0;
+  height: 100vh;
+  background: linear-gradient(to bottom, #0f172a, #1e293b);
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+}
+.scene {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* DISPENSER */
+.dispenser {
+  position: absolute;
+  top: 150px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 150px;
+  background: #444;
+  border-radius: 10px;
+  opacity: 0;
+}
+.dispenser .slot {
+  width: 60px;
+  height: 20px;
+  background: #222;
+  margin: 0 auto;
+  margin-top: 10px;
+  border-radius: 5px;
+}
+
+/* GLOVES */
+.glove {
+  position: absolute;
+  top: 170px;
+  width: 40px;
+  height: 60px;
+  background: #00eaff;
+  border-radius: 10px;
+  opacity: 0;
+}
+.left-glove { left: 48%; }
+.right-glove { left: 52%; }
+
+/* CHARACTER */
+.character {
+  position: absolute;
+  bottom: 100px;
+  left: -150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.head {
+  width: 60px; height: 60px;
+  background: #ffe0bd;
+  border-radius: 50%;
+  margin: 0 auto; position: relative;
+}
+.eye {
+  width: 8px; height: 8px; background: black; border-radius: 50%;
+  position: absolute; top: 20px;
+}
+.eye.left { left: 15px; }
+.eye.right { right: 15px; }
+.mouth {
+  width: 20px; height: 5px; background: #333;
+  border-radius: 3px; position: absolute;
+  bottom: 15px; left: 50%; transform: translateX(-50%);
+}
+.torso {
+  width: 40px; height: 100px; background: #2563eb;
+  margin: 0 auto; border-radius: 8px;
+}
+.arm {
+  position: absolute; top: 70px; width: 0; height: 0;
+}
+.upper-arm, .lower-arm {
+  width: 15px; height: 50px; background: #94a3b8;
+  border-radius: 8px; transform-origin: top center;
+}
+.lower-arm { margin-top: -5px; }
+.arm.left { left: -25px; }
+.arm.right { right: -25px; }
+.leg {
+  position: absolute; top: 160px; width: 0; height: 0;
+}
+.upper-leg, .lower-leg {
+  width: 20px; height: 55px; background: #475569;
+  border-radius: 8px; transform-origin: top center;
+}
+.lower-leg { margin-top: -5px; }
+.leg.left { left: 5px; }
+.leg.right { right: 5px; }
+
+/* BRANDING */
+.branding {
+  position: absolute;
+  bottom: 220px;
+  right: 10%;
+  opacity: 0;
+  text-align: right;
+}
+.branding h1 {
+  font-size: 2.5rem;
+  color: #00eaff;
+  text-shadow: 0 0 10px #00eaff, 0 0 20px #00eaff;
+  animation: glow 2s infinite alternate;
+}
+.branding p {
+  font-size: 1rem;
+  color: #c8fff5;
+}
+
+/* ANIMATIONS */
+@keyframes dispenserIn {
+  to { opacity: 1; }
+}
+@keyframes glovesDrop {
+  0% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 1; transform: translateY(80px); }
+}
+@keyframes walkIn {
+  0% { left: -150px; }
+  80% { left: 40%; }
+  100% { left: 40%; }
+}
+@keyframes leg-swing-left {
+  0% { transform: rotate(-25deg); }
+  50% { transform: rotate(25deg); }
+  100% { transform: rotate(-25deg); }
+}
+@keyframes leg-swing-right {
+  0% { transform: rotate(25deg); }
+  50% { transform: rotate(-25deg); }
+  100% { transform: rotate(25deg); }
+}
+@keyframes wave {
+  0% { transform: rotate(20deg); }
+  25% { transform: rotate(-10deg); }
+  50% { transform: rotate(20deg); }
+  75% { transform: rotate(-10deg); }
+  100% { transform: rotate(20deg); }
+}
+@keyframes showBrand { to { opacity: 1; } }
+@keyframes glow {
+  from { text-shadow: 0 0 10px #00eaff, 0 0 20px #00eaff; }
+  to { text-shadow: 0 0 20px #00eaff, 0 0 40px #00eaff; }
+}
+
+/* STATE CLASSES */
+.walk .leg.left { animation: leg-swing-left 0.8s infinite; }
+.walk .leg.right { animation: leg-swing-right 0.8s infinite; }
+.wave .arm.right { animation: wave 1s infinite; }
