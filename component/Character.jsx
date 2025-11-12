@@ -1,51 +1,52 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect } from "react";
 import { useGLTF, useAnimations } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 
-export default function Character({ url }) {
+export default function Character(props) {
   const group = useRef();
-  const { scene, animations } = useGLTF(url);
-  const { actions, mixer } = useAnimations(animations, group);
+  const { scene, animations } = useGLTF("/character.glb");
+  const { actions } = useAnimations(animations, group);
 
-  const [currentAction, setCurrentAction] = useState(null);
-
-  // Log available animations
   useEffect(() => {
-    const animationKeys = Object.keys(actions);
-    console.log("Available animations:", animationKeys);
+    const walk = actions["walking"];
+    const dip = actions["Action.010"];
+    const wave = actions["waving.02"];
 
-    // Play the first animation as default
-    if (animationKeys.length > 0) {
-      setCurrentAction(animationKeys[0]);
-      actions[animationKeys[0]].reset().fadeIn(0.5).play();
-    } else {
-      console.warn("No animations found in the GLTF file");
+    if (walk) {
+      walk.reset().play();
+      walk.clampWhenFinished = true;
+
+      walk.addEventListener("finished", () => {
+        if (dip) {
+          dip.reset().play();
+          dip.clampWhenFinished = true;
+        }
+      });
+
+      if (dip) {
+        dip.addEventListener("finished", () => {
+          if (wave) {
+            wave.reset().play();
+            wave.clampWhenFinished = true;
+          }
+        });
+      }
     }
   }, [actions]);
 
-  // Movement logic
-  useFrame((state, delta) => {
-    if (group.current && currentAction) {
-      if (currentAction === "mixamo.com" && group.current.position.z < 0) {
-        group.current.position.z += 1 * delta; // Move forward
-      } else if (currentAction === "mixamo.com") {
-        setCurrentAction("mixamo.com|Waving");
-        if (actions["mixamo.com"]) actions["mixamo.com"].fadeOut(0.5);
-        if (actions["mixamo.com|Waving"]) {
-          actions["mixamo.com|Waving"].reset().fadeIn(0.5).play();
-        } else {
-          console.warn("mixamo.com|Waving animation not found");
-        }
+  // Move forward while walking
+  useFrame(() => {
+    const walk = actions["walking"];
+    const dip = actions["Action.010"];
+
+    if (walk && walk.isRunning()) {
+      group.current.position.x += 0.02;
+      if (group.current.position.x >= 0) {
+        walk.stop();
+        if (dip && !dip.isRunning()) dip.play();
       }
     }
   });
 
-  return (
-    <primitive
-      ref={group}
-      object={scene}
-      scale={0.1} // Adjust scale
-      position={[5, 0, 0]} // Adjust position
-    />
-  );
+  return <primitive ref={group} object={scene} {...props} />;
 }
